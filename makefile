@@ -15,6 +15,15 @@ LINKER_FLAGS = -lSDL3 -lSDL3_image -lSDL3_ttf -lSDL3_image
 OBJ_NAME = ./a.out
 
 #This is the target that compiles our executable
+
 all : $(OBJS)
+	rm a.out
 	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
 	$(OBJ_NAME)
+
+game : $(OBJS)
+	$(CC) $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS) -o $(OBJ_NAME)
+	$(OBJ_NAME)
+
+clean :
+	rm a.out

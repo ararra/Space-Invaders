@@ -5,6 +5,9 @@
 #include <SDL3/SDL.h>
 
 
+#define SCREEN_WIDTH 680
+#define SCREEN_HEIGHT 420
+
 typedef struct game
 {
     SDL_Renderer* renderer;

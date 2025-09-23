@@ -3,7 +3,7 @@
 
 int main()
 {
-    bool game_is_running;
+    bool game_is_running = true;
     SDL_Event event;
 
     initialize_SDL();
@@ -16,7 +16,7 @@ int main()
 
         while (SDL_PollEvent(&event))
         {
-            if (&event.type == SDL_EVENT_QUIT)
+            if (event.type == SDL_EVENT_QUIT)
             {
                 game_is_running = false;
             }
@@ -27,8 +27,14 @@ int main()
         // Render
         SDL_RenderClear(g_game.renderer);
         SDL_RenderPresent(g_game.renderer);
+
+
     }
     
+    SDL_DestroyRenderer(g_game.renderer);
+    SDL_DestroyWindow(g_game.window);
+    SDL_Quit();
+    return 0;
 
 }
 
@@ -40,6 +46,15 @@ void initialize_SDL()
         exit(EXIT_FAILURE);
     }
 
+    g_game.window = SDL_CreateWindow("game title", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    if(!g_game.window)
+    {
+        SDL_Log("Failed to create window. Error: %s", SDL_GetError());
+    }
+    g_game.renderer = SDL_CreateRenderer(g_game.window, NULL);
+    if(!g_game.window)
+    {
+        SDL_Log("Failed to create window. Error: %s", SDL_GetError());   
+    }
 
-    
 }
