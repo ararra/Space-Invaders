@@ -25,8 +25,26 @@ int main()
         
         // Logic
         // Render
+
+
         SDL_RenderClear(g_game.renderer);
+
+
+        ////
+        // Set render color to white renders a filled white rectangle and sets the render color back in black
+        ////
+        // SDL_SetRenderDrawColor(g_game.renderer, 0b11111111, 0b11111111, 0b11111111, SDL_ALPHA_OPAQUE);
+        // SDL_FRect box = {.x = 50, .y = 50 , .h = 50, .w = 50};
+        // SDL_RenderFillRect(g_game.renderer, &box);
+        // SDL_SetRenderDrawColor(g_game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+
+
+
+
         SDL_RenderPresent(g_game.renderer);
+
+
+
 
 
     }
