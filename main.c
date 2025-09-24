@@ -7,6 +7,7 @@ int main()
     SDL_Event event;
 
     initialize_SDL();
+    load_in_textures();
 
 
 
@@ -38,9 +39,12 @@ int main()
         // SDL_RenderFillRect(g_game.renderer, &box);
         // SDL_SetRenderDrawColor(g_game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 
+        //render player
 
+        SDL_FRect player_position = {.x = 375, .y = 540 , .h = 50, .w = 50};
+        SDL_RenderTexture(g_game.renderer, g_game.player_texture, NULL, &player_position);
 
-
+        SDL_SetRenderDrawColor(g_game.renderer, 32, 32, 32, SDL_ALPHA_OPAQUE);
         SDL_RenderPresent(g_game.renderer);
 
 
@@ -74,5 +78,23 @@ void initialize_SDL()
     {
         SDL_Log("Failed to create window. Error: %s", SDL_GetError());   
     }
+
+}
+
+void load_in_textures()
+{   SDL_Surface* temp = IMG_Load("assets/01.png");
+    g_game.bullet_texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
+
+    temp = IMG_Load("assets/player.png");
+    g_game.player_texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
+
+    temp = IMG_Load("assets/green.png");
+    g_enemy_green.texture =  SDL_CreateTextureFromSurface(g_game.renderer, temp);
+
+    temp = IMG_Load("assets/yellow.png");
+    g_enemy_yellow.texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
+
+    temp = IMG_Load("assets/red.png");
+    g_enemy_red.texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
 
 }
