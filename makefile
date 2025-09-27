@@ -2,7 +2,7 @@
 OBJS = main.c
 
 #CC specifies which compiler we're using
-CC = gcc
+CC = gcc -std=c23
 
 #COMPILER_FLAGS specifies the additional compilation options we're using
 # -w suppresses all warnings

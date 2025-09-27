@@ -5,9 +5,7 @@ int main()
 {
     bool game_is_running = true;
     SDL_Event event;
-
-    initialize_SDL();
-    load_in_textures();
+    initialize_game();
 
 
 
@@ -39,10 +37,19 @@ int main()
         // SDL_RenderFillRect(g_game.renderer, &box);
         // SDL_SetRenderDrawColor(g_game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 
-        //render player
-
+        //render assets 
         SDL_FRect player_position = {.x = 375, .y = 540 , .h = 50, .w = 50};
         SDL_RenderTexture(g_game.renderer, g_game.player_texture, NULL, &player_position);
+
+        for(int i = 0; i<ENEMY_SIZE_MAX; i++)
+        {
+            SDL_RenderTexture(g_game.renderer, g_enemy_red.texture, NULL, &g_enemy_red.position_arr[i]);
+            SDL_RenderTexture(g_game.renderer, g_enemy_yellow.texture, NULL, &g_enemy_yellow.position_arr[i]);
+            SDL_RenderTexture(g_game.renderer, g_enemy_green.texture, NULL, &g_enemy_green.position_arr[i]);
+        }
+
+
+
 
         SDL_SetRenderDrawColor(g_game.renderer, 32, 32, 32, SDL_ALPHA_OPAQUE);
         SDL_RenderPresent(g_game.renderer);
@@ -58,6 +65,13 @@ int main()
     SDL_Quit();
     return 0;
 
+}
+
+void initialize_game(){
+    
+    initialize_SDL();
+    load_in_textures();
+    set_start_variables();
 }
 
 void initialize_SDL()
@@ -82,7 +96,8 @@ void initialize_SDL()
 }
 
 void load_in_textures()
-{   SDL_Surface* temp = IMG_Load("assets/01.png");
+{   
+    SDL_Surface* temp = IMG_Load("assets/01.png");
     g_game.bullet_texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
 
     temp = IMG_Load("assets/player.png");
@@ -97,4 +112,19 @@ void load_in_textures()
     temp = IMG_Load("assets/red.png");
     g_enemy_red.texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
 
+}
+
+void set_start_variables()
+{
+    for(int i = 0; i < ENEMY_SIZE_MAX; i++)
+    {
+        g_enemy_red.health_arr[i] = 3;
+        g_enemy_red.position_arr[i] = (SDL_FRect){.x = 20 + i*70, .y = 20, .w = 50 , .h = 50};
+        g_enemy_yellow.health_arr[i] = 2;
+        g_enemy_yellow.position_arr[i] = (SDL_FRect){.x = 20 + i*70, .y = 120, .w = 50 , .h = 50};
+        g_enemy_green.health_arr[i] = 1;
+        g_enemy_green.position_arr[i] = (SDL_FRect){.x = 20 + i*70, .y = 220, .w = 50 , .h = 50};
+        
+
+    }
 }
