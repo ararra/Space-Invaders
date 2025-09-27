@@ -6,7 +6,7 @@ int main()
     bool game_is_running = true;
     SDL_Event event;
     initialize_game();
-
+    uint64_t last_time = 0, current_time;
 
 
     while (game_is_running)
@@ -23,6 +23,15 @@ int main()
         }
         
         // Logic
+        current_time = SDL_GetTicks();
+        uint64_t time_delta = (current_time-last_time);
+        SDL_Log("time delta is %d", time_delta);
+        last_time = current_time;
+
+        //continuous player movement
+        handle_player_movement(time_delta);
+
+
         // Render
 
 
@@ -38,11 +47,10 @@ int main()
         // SDL_SetRenderDrawColor(g_game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 
         //render assets 
-        SDL_FRect player_position = {.x = 375, .y = 540 , .h = 50, .w = 50};
-        SDL_RenderTexture(g_game.renderer, g_game.player_texture, NULL, &player_position);
+        SDL_FRect player_position = {.x = 375, .y = 800 , .h = 50, .w = 50};
+        SDL_RenderTexture(g_game.renderer, g_game.player_texture, NULL, &g_game.player_position);
 
-        for(int i = 0; i<ENEMY_SIZE_MAX; i++)
-        {
+        for(int i = 0; i<ENEMY_SIZE_MAX; i++){
             SDL_RenderTexture(g_game.renderer, g_enemy_red.texture, NULL, &g_enemy_red.position_arr[i]);
             SDL_RenderTexture(g_game.renderer, g_enemy_yellow.texture, NULL, &g_enemy_yellow.position_arr[i]);
             SDL_RenderTexture(g_game.renderer, g_enemy_green.texture, NULL, &g_enemy_green.position_arr[i]);
@@ -55,7 +63,7 @@ int main()
         SDL_RenderPresent(g_game.renderer);
 
 
-
+        SDL_Delay(16.7);
 
 
     }
@@ -67,15 +75,37 @@ int main()
 
 }
 
-void initialize_game(){
+
+void handle_player_movement(uint64_t time_delta){
+    const bool *keys = SDL_GetKeyboardState(NULL);
+    if (keys[SDL_SCANCODE_W])
+    {
+        g_game.player_position.y -= time_delta;
+    }
+    if (keys[SDL_SCANCODE_S])
+    {
+        g_game.player_position.y += time_delta;
+    }
+    if (keys[SDL_SCANCODE_A])
+    {
+        g_game.player_position.x -= time_delta;
+    }
+    if (keys[SDL_SCANCODE_D])
+    {
+        g_game.player_position.x += time_delta;
+    }
     
+
+}
+
+
+void initialize_game(){    
     initialize_SDL();
     load_in_textures();
     set_start_variables();
 }
 
-void initialize_SDL()
-{
+void initialize_SDL(){
     if(!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO| SDL_INIT_GAMEPAD))
     {
         SDL_Log("Failled to initialize. Error:%s",SDL_GetError());
@@ -95,8 +125,7 @@ void initialize_SDL()
 
 }
 
-void load_in_textures()
-{   
+void load_in_textures(){   
     SDL_Surface* temp = IMG_Load("assets/01.png");
     g_game.bullet_texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
 
@@ -114,8 +143,10 @@ void load_in_textures()
 
 }
 
-void set_start_variables()
-{
+void set_start_variables(){
+
+    g_game.player_position = (SDL_FRect){.x = 375, .y = 800 , .h = 50, .w = 50};
+
     for(int i = 0; i < ENEMY_SIZE_MAX; i++)
     {
         g_enemy_red.health_arr[i] = 3;
