@@ -6,8 +6,8 @@
 #include <SDL3_image/SDL_image.h>
 
 #define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 900   
-#define ENEMY_SIZE_MAX 11
+#define SCREEN_HEIGHT 700   
+#define ENEMY_SIZE_MAX 10
 #define BULLET_RENDER_MAX 10
 
 
@@ -64,3 +64,4 @@ void initialize_SDL();
 void load_in_textures();
 void set_start_variables();
 void handle_player_movement(uint64_t time_delta);
+void enemy_move();

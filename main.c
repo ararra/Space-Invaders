@@ -30,7 +30,7 @@ int main()
 
         //continuous player movement
         handle_player_movement(time_delta);
-
+        enemy_move();
 
         // Render
 
@@ -47,7 +47,6 @@ int main()
         // SDL_SetRenderDrawColor(g_game.renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 
         //render assets 
-        SDL_FRect player_position = {.x = 375, .y = 800 , .h = 50, .w = 50};
         SDL_RenderTexture(g_game.renderer, g_game.player_texture, NULL, &g_game.player_position);
 
         for(int i = 0; i<ENEMY_SIZE_MAX; i++){
@@ -97,7 +96,19 @@ void handle_player_movement(uint64_t time_delta){
     
 
 }
-
+void enemy_move()
+{
+    SDL_Log("%d",g_enemy_green.position_arr[0].y);
+    if (g_enemy_green.position_arr[0].y <= SCREEN_HEIGHT-g_enemy_green.position_arr[0].h)
+    {
+        for(int i = 0; i < ENEMY_SIZE_MAX; i++)
+        {
+            g_enemy_red.position_arr[i].y += 5.0; 
+            g_enemy_yellow.position_arr[i].y += 5.0;
+            g_enemy_green.position_arr[i].y += 5.0;
+        }   
+    }
+}
 
 void initialize_game(){    
     initialize_SDL();
@@ -145,7 +156,7 @@ void load_in_textures(){
 
 void set_start_variables(){
 
-    g_game.player_position = (SDL_FRect){.x = 375, .y = 800 , .h = 50, .w = 50};
+    g_game.player_position = (SDL_FRect){.x = 375, .y = 600 , .h = 50, .w = 50};
 
     for(int i = 0; i < ENEMY_SIZE_MAX; i++)
     {
