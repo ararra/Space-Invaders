@@ -22,6 +22,7 @@ typedef struct game
     SDL_Texture* bullet_texture;
     SDL_FRect player_position;
     SDL_FRect bullet_position_arr[BULLET_RENDER_MAX];
+    int cur_amount_bullets;
 
 }game;
 game g_game;
@@ -65,3 +66,5 @@ void load_in_textures();
 void set_start_variables();
 void handle_player_movement(uint64_t time_delta);
 void enemy_move();
+void bullet_hit_enemy();
+void player_shoot_bullet(int *bullet_cooldown);

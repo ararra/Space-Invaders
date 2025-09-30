@@ -7,31 +7,35 @@ int main()
     SDL_Event event;
     initialize_game();
     uint64_t last_time = 0, current_time;
+    int bullet_cooldown = 0;
 
 
     while (game_is_running)
     {        
         // Events
-
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_EVENT_QUIT)
             {
                 game_is_running = false;
             }
-            
         }
         
         // Logic
         current_time = SDL_GetTicks();
         uint64_t time_delta = (current_time-last_time);
-        SDL_Log("time delta is %d", time_delta);
+        //SDL_Log("time delta is %d", time_delta);
         last_time = current_time;
 
         //continuous player movement
         handle_player_movement(time_delta);
-        enemy_move();
+        player_shoot_bullet(&bullet_cooldown);
 
+        if (bullet_cooldown > 0)
+        {
+            bullet_cooldown -= time_delta;
+        }
+        bullet_hit_enemy();
         // Render
 
 
@@ -55,16 +59,14 @@ int main()
             SDL_RenderTexture(g_game.renderer, g_enemy_green.texture, NULL, &g_enemy_green.position_arr[i]);
         }
 
-
-
+        for(int i = 0; i<g_game.cur_amount_bullets; i++){
+            SDL_RenderTexture(g_game.renderer, g_game.bullet_texture, NULL, &g_game.bullet_position_arr[i]);
+        }
 
         SDL_SetRenderDrawColor(g_game.renderer, 32, 32, 32, SDL_ALPHA_OPAQUE);
         SDL_RenderPresent(g_game.renderer);
 
-
         SDL_Delay(16.7);
-
-
     }
     
     SDL_DestroyRenderer(g_game.renderer);
@@ -73,7 +75,20 @@ int main()
     return 0;
 
 }
+void bullet_hit_enemy()
+{
 
+    for (size_t i = 0; i < BULLET_RENDER_MAX; i++)
+    {
+        for (size_t j = 0; j < ENEMY_SIZE_MAX; j++)
+        {
+            if (SDL_HasRectIntersectionFloat(&g_game.bullet_position_arr[i], &g_enemy_green.position_arr[j]))
+            {
+                SDL_Log("enemy hit");
+            }
+        }
+    }
+}
 
 void handle_player_movement(uint64_t time_delta){
     const bool *keys = SDL_GetKeyboardState(NULL);
@@ -93,10 +108,21 @@ void handle_player_movement(uint64_t time_delta){
     {
         g_game.player_position.x += time_delta;
     }
-    
+
 
 }
-void enemy_move()
+void player_shoot_bullet(int *bullet_cooldown)
+{
+    const bool *keys = SDL_GetKeyboardState(NULL);// this should be more global right?
+    if (keys[SDL_SCANCODE_SPACE] && g_game.cur_amount_bullets < BULLET_RENDER_MAX && *bullet_cooldown <= 0)
+    {
+        
+        g_game.bullet_position_arr[g_game.cur_amount_bullets] = g_game.player_position  ;
+        g_game.cur_amount_bullets += 1;
+        *bullet_cooldown = 2500;
+    }
+}
+void enemy_move_down()
 {
     SDL_Log("%d",g_enemy_green.position_arr[0].y);
     if (g_enemy_green.position_arr[0].y <= SCREEN_HEIGHT-g_enemy_green.position_arr[0].h)
@@ -157,6 +183,8 @@ void load_in_textures(){
 void set_start_variables(){
 
     g_game.player_position = (SDL_FRect){.x = 375, .y = 600 , .h = 50, .w = 50};
+    g_game.cur_amount_bullets = 0;
+
 
     for(int i = 0; i < ENEMY_SIZE_MAX; i++)
     {
