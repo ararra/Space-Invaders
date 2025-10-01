@@ -68,3 +68,5 @@ void handle_player_movement(uint64_t time_delta);
 void enemy_move();
 void bullet_hit_enemy();
 void player_shoot_bullet(int *bullet_cooldown);
+void player_bullet_move(uint64_t time_delta);
+void remove_bullet(int i);

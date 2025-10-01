@@ -35,6 +35,8 @@ int main()
         {
             bullet_cooldown -= time_delta;
         }
+
+        player_bullet_move(time_delta);
         bullet_hit_enemy();
         // Render
 
@@ -75,6 +77,7 @@ int main()
     return 0;
 
 }
+//horrible code deal with this
 void bullet_hit_enemy()
 {
 
@@ -84,10 +87,48 @@ void bullet_hit_enemy()
         {
             if (SDL_HasRectIntersectionFloat(&g_game.bullet_position_arr[i], &g_enemy_green.position_arr[j]))
             {
-                SDL_Log("enemy hit");
+                g_enemy_green.position_arr[j].x = 1000;
+                remove_bullet(i);
+            }
+            else if (SDL_HasRectIntersectionFloat(&g_game.bullet_position_arr[i], &g_enemy_yellow.position_arr[j]))
+            {
+                g_enemy_yellow.position_arr[j].x = 1000;
+                remove_bullet(i);
+
+            }
+            else if (SDL_HasRectIntersectionFloat(&g_game.bullet_position_arr[i], &g_enemy_red.position_arr[j]))
+            {
+                g_enemy_red.position_arr[j].x = 1000;
+                remove_bullet(i);
+
             }
         }
     }
+}
+
+void remove_bullet(int i)
+{
+    for(int j = i; j < BULLET_RENDER_MAX-1; j++)
+    {
+        g_game.bullet_position_arr[j] = g_game.bullet_position_arr[j+1];
+    }
+    g_game.cur_amount_bullets -= 1;
+}
+
+void player_bullet_move(uint64_t time_delta)
+{
+    for(int i = 0; i < g_game.cur_amount_bullets; i++)
+    {
+        g_game.bullet_position_arr[i].y -= time_delta/5;    
+
+        if(g_game.bullet_position_arr[i].y <= -50.0)
+        {
+            SDL_Log("where is bullet %d, it is at y %d",i, g_game.bullet_position_arr[i].y);
+            remove_bullet(i);
+        }
+    }
+    
+
 }
 
 void handle_player_movement(uint64_t time_delta){
@@ -119,7 +160,7 @@ void player_shoot_bullet(int *bullet_cooldown)
         
         g_game.bullet_position_arr[g_game.cur_amount_bullets] = g_game.player_position  ;
         g_game.cur_amount_bullets += 1;
-        *bullet_cooldown = 2500;
+        *bullet_cooldown = 1000;
     }
 }
 void enemy_move_down()
@@ -142,7 +183,8 @@ void initialize_game(){
     set_start_variables();
 }
 
-void initialize_SDL(){
+void initialize_SDL()
+{
     if(!SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO| SDL_INIT_GAMEPAD))
     {
         SDL_Log("Failled to initialize. Error:%s",SDL_GetError());
@@ -162,7 +204,8 @@ void initialize_SDL(){
 
 }
 
-void load_in_textures(){   
+void load_in_textures()
+{   
     SDL_Surface* temp = IMG_Load("assets/01.png");
     g_game.bullet_texture = SDL_CreateTextureFromSurface(g_game.renderer, temp);
 
